@@ -1,9 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__) . '/Raven/Client.php');
-require_once(dirname(__FILE__) . '/Raven/Compat.php');
-require_once(dirname(__FILE__) . '/Raven/ErrorHandler.php');
-require_once(dirname(__FILE__) . '/Raven/Stacktrace.php');
+require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Raven' . DIRECTORY_SEPARATOR . 'Autoloader.php');
+Raven_Autoloader::register();
 
 /**
  * MarcomSentry allows you to send message and exception to Sentry.
@@ -43,7 +41,7 @@ class MarcomSentry extends Raven_Client {
 	* @return integer Sentry event ID 
 	*/
 	static public function sendMessage($title, $description = '', $level = self::INFO){
-		return self::getInstance()->captureMessage($title, array('description' => $description), $level, /*debug_backtrace()*/false);
+		return self::getInstance()->captureMessage($title, array('description' => $description), $level);
 	}
 
 	/**

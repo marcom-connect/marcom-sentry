@@ -14,18 +14,18 @@ In the `3rdParty` folder of your Marcom applications.
 ### Via git clone
 
 ```
-$ git clone git@github.com:marcom-connect/marcom-sentry.git MarcomSentry
+$ git clone git@github.com:marcom-connect/marcom-sentry.git marcom-sentry
 ```
 
 ### Via git submodule
 
 ```
-$ git submodule add git@github.com:marcom-connect/marcom-sentry.git MarcomSentry
+$ git submodule add git@github.com:marcom-connect/marcom-sentry.git marcom-sentry
 ```
 
 ### Via zip archive
 
-[Download](https://github.com/marcom-connect/marcom-sentry/zipball/master) and extract zip archive contents into `MarcomSentry`.
+[Download](https://github.com/marcom-connect/marcom-sentry/zipball/master) and extract zip archive contents into `marcom-sentry`.
 
 ## Configuration
 
@@ -35,7 +35,7 @@ In `www/config.inc.php`
 define('MARCOM_SENTRY_ENABLED', true);
 define('MARCOM_SENTRY_DSN', 'http://public:secret@sentry.example.com:9000/[PROJECT_ID]');
 define('MARCOM_SENTRY_LOGGER', 'custom-logger-name');
-require_once('MarcomSentry/marcom-sentry.inc.php');
+require_once('marcom-sentry/marcom-sentry.inc.php');
 ```
 
 ## Usage
