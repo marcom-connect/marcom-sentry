@@ -28,9 +28,9 @@ function sentry_level($errno){
 		//case E_STRICT:
 			$level = MarcomSentry::INFO;
 			break;
-		case E_DEPRECATED:
-			$level = MarcomSentry::DEBUG;
-			break;
+		// case E_DEPRECATED:
+		// 	$level = MarcomSentry::DEBUG;
+		// 	break;
 		default:
 			$level = false;
 	}
