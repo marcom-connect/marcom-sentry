@@ -1,7 +1,14 @@
 <?php
 
-require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Raven' . DIRECTORY_SEPARATOR . 'Autoloader.php');
-Raven_Autoloader::register();
+$baseDir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Raven' . DIRECTORY_SEPARATOR;
+require_once($baseDir . 'Client.php');
+require_once($baseDir . 'Compat.php');
+require_once($baseDir . 'ErrorHandler.php');
+require_once($baseDir . 'Processor.php');
+require_once($baseDir . 'SanitizeDataProcessor.php');
+require_once($baseDir . 'Serializer.php');
+require_once($baseDir . 'Stacktrace.php');
+require_once($baseDir . 'Util.php');
 
 /**
  * MarcomSentry allows you to send message and exception to Sentry.
