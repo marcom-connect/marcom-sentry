@@ -17,7 +17,7 @@
 
 class Raven_Client
 {
-    const VERSION = '0.1.0';
+    const VERSION = '0.3.1';
 
     const DEBUG = 'debug';
     const INFO = 'info';
@@ -183,9 +183,9 @@ class Raven_Client
         );
 
         $data['sentry.interfaces.Exception'] = array(
-                'value' => $exc_message,
-                'type' => $exception->getCode(),
-                'module' => $exception->getFile() .':'. $exception->getLine(),
+            'value' => $exc_message,
+            'type' => get_class($exception),
+            'module' => $exception->getFile() .':'. $exception->getLine(),
         );
 
         if ($culprit){
@@ -211,12 +211,10 @@ class Raven_Client
 
     private function is_http_request()
     {
-        // The function getallheaders() is only available when running in a
-        // web-request. The function is missing when run from the commandline..
-        return function_exists('getallheaders');
+        return isset($_SERVER['REQUEST_METHOD']);
     }
 
-    private function get_http_data()
+    protected function get_http_data()
     {
         return array(
             'sentry.interfaces.Http' => array(
@@ -225,10 +223,26 @@ class Raven_Client
                 'query_string' => $this->_server_variable('QUERY_STRNG'),
                 'data' => $_POST,
                 'cookies' => $_COOKIE,
-                'headers' => getallheaders(),
+                'headers' => headers_list(),
                 'env' => $_SERVER,
             )
         );
+    }
+
+    protected function get_user_data()
+    {
+        return array(
+            'sentry.interfaces.User' => array(
+                'is_authenticated' => isset($_SESSION) && count($_SESSION) ? true : false,
+                'id' => session_id(),
+                'data' => isset($_SESSION) ? $_SESSION : null,
+            )
+        );
+    }
+
+    protected function get_extra_data()
+    {
+        return array();
     }
 
     public function capture($data, $stack)
@@ -247,6 +261,7 @@ class Raven_Client
 
         if ($this->is_http_request()) {
             $data = array_merge($data, $this->get_http_data());
+            $data = array_merge($data, $this->get_user_data());
         }
 
         if ((!$stack && $this->auto_log_stacks) || $stack === True) {
@@ -264,12 +279,16 @@ class Raven_Client
             }
         }
 
-        if (function_exists('mb_convert_encoding')) {
-            $data = $this->remove_invalid_utf8($data);
-        }
-
         // TODO: allow tags to be specified per event
         $data['tags'] = $this->tags;
+
+        if (empty($data["logger"])){
+            $data["logger"] = 'php';
+        }
+
+        if ($extra = $this->get_extra_data()) {
+            $data["extra"] = $extra;
+        }
 
         $this->sanitize($data);
         $this->process($data);
@@ -445,23 +464,4 @@ class Raven_Client
         }
         return '';
     }
-
-    private function remove_invalid_utf8($data)
-    {
-        foreach ($data as $key => $value) {
-            if (is_string($key)) {
-                $key = mb_convert_encoding($key, 'UTF-8', 'UTF-8');
-            }
-            if (is_string($value)) {
-                $value = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
-            }
-            if (is_array($value)) {
-                $value = $this->remove_invalid_utf8($value);
-            }
-            $data[$key] = $value;
-        }
-
-        return $data;
-    }
-
 }
