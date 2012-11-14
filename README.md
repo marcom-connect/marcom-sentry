@@ -25,7 +25,7 @@ $ git submodule add git@github.com:marcom-connect/marcom-sentry.git marcom-sentr
 
 ### Via zip archive
 
-[Download](https://github.com/marcom-connect/marcom-sentry/zipball/master) and extract zip archive contents into `marcom-sentry`.
+[Download](https://github.com/marcom-connect/marcom-sentry/archive/master.zip) and extract zip archive contents into `marcom-sentry`.
 
 ## Configuration
 
