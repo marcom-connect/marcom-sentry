@@ -33,7 +33,18 @@ class MarcomSentry extends Raven_Client {
 			if (!defined('MARCOM_SENTRY_DSN')) {
 				throw new Exception('Please define "MARCOM_SENTRY_DSN" constant.');
 			}
-			self::$_instance = new MarcomSentry(MARCOM_SENTRY_DSN);
+			if (null !== self::$_logger) {
+				$logger = self::$_logger;
+			} elseif (defined('MARCOM_SENTRY_LOGGER')) {
+				$logger = MARCOM_SENTRY_LOGGER;
+			} elseif (defined('APPLICATION_VERSION_INSTALLATION_FULLNAME')) {
+				$logger = APPLICATION_VERSION_INSTALLATION_FULLNAME;
+			} elseif (defined('APPLICATION_VERSION_INSTALLATION')) {
+				$logger = APPLICATION_VERSION_INSTALLATION;
+			} else {
+				$logger = 'eschedule-pro';
+			}
+			self::$_instance = new MarcomSentry(MARCOM_SENTRY_DSN, array('logger' => $logger));
 		}
 		return self::$_instance;
 	}
@@ -75,19 +86,6 @@ class MarcomSentry extends Raven_Client {
 		if (!empty($data['sentry.interfaces.Exception']['value'])) {
 			$data['message'] = !empty($data['culprit'])?$data['culprit']:' ';
 			$data['culprit'] = $data['sentry.interfaces.Exception']['value'];
-		}
-		if (!isset($data['logger'])) {
-			if (null !== self::$_logger) {
-				$data['logger'] = self::$_logger;
-			} elseif (defined('MARCOM_SENTRY_LOGGER')) {
-				$data['logger'] = MARCOM_SENTRY_LOGGER;
-			} elseif (defined('APPLICATION_VERSION_INSTALLATION_FULLNAME')) {
-				$data['logger'] = APPLICATION_VERSION_INSTALLATION_FULLNAME;
-			} elseif (defined('APPLICATION_VERSION_INSTALLATION')) {
-				$data['logger'] = APPLICATION_VERSION_INSTALLATION;
-			} else {
-				$data['logger'] = 'eschedule-pro';
-			}
 		}
 		return parent::capture($data, $stack);
 	}
